@@ -3,6 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# Ignore all contents of the data folder except the folder itself
+data/*
+!data/.gitkeep
+
 # C extensions
 *.so
 
