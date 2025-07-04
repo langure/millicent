@@ -1,0 +1,10 @@
+The results of the linear regression analysis indicate that it is not possible to reliably predict the "Calificación 3 er parcial" (third partial grade) using the available numeric data in your dataset.
+
+Key points for a school principal:
+
+The R² score is -0.0047, which means the model does not explain the variation in students' third partial grades. In fact, a negative R² suggests the model performs worse than simply predicting the average for all students.
+All regression coefficients are extremely close to zero, indicating that none of the numeric variables in your data have a meaningful relationship with the third partial grade.
+The predicted values are almost constant and do not match the actual variation in student grades, as seen in the plots.
+This suggests that either the third partial grade is determined by factors not present in your data (such as classroom participation, homework, or teacher-specific criteria), or that the data lacks the necessary detail or quality for this type of prediction.
+Recommendation:
+To better understand or predict student grades, consider collecting additional data that may influence academic performance, such as attendance, participation, homework completion, or qualitative teacher assessments. Alternatively, review the grading process to ensure all relevant factors are being captured in your records.

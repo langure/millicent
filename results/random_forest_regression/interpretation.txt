@@ -1,0 +1,10 @@
+The R² score is 0.9820, which is still very high, indicating the model explains about 98% of the variance in "Calificación 3 er parcial" using the remaining features.
+The most important predictors are now "IECONOMIA", "IADMINTRA", "ICONTAFIN", "IADERECHO", "IMERCADOC", and "IMATEMEST"—all of which appear to be subject or area-specific scores.
+The predicted vs. actual plot shows a strong linear relationship, with predictions closely matching actual values, but with a bit more spread than before (which is expected after removing directly related columns).
+The residuals plot shows most errors are small and centered around zero, but with a wider spread than before, indicating the model is not simply memorizing the target.
+Interpretation for a school principal:
+
+The third partial grade ("Calificación 3 er parcial") can be predicted very accurately using the students' scores in specific subject areas (economics, administration, accounting, law, marketing, mathematics).
+These subject scores are the main drivers of the final grade, while demographic and identification variables (like SEXO, ENTI_NAC, etc.) have minimal influence.
+The model is now providing insight into which academic areas most influence the final grade, rather than just reproducing a formula.
+This analysis can help you understand which academic strengths are most closely associated with higher final grades, and may inform targeted interventions or support for students in specific subjects.

@@ -10,6 +10,7 @@ from utils import (
     missing_data_analysis,
     visualizations
 )
+from regression import linear_regression, polynomial_regression, random_forest_regression, nn_regression
 
 if __name__ == "__main__":
     df = read_excel_file("data/data.xlsx")
@@ -36,3 +37,15 @@ if __name__ == "__main__":
 
     print("\n" + "-"*60 + "\nVisualizations\n" + "-"*60)
     visualizations(df)
+
+    print("\n" + "-"*60 + "\nLinear Regression\n" + "-"*60)
+    linear_regression()
+
+    print("\n" + "-"*60 + "\nPolynomial Regression (degree 3)\n" + "-"*60)
+    #polynomial_regression()
+
+    print("\n" + "-"*60 + "\nRandom Forest Regression\n" + "-"*60)
+    random_forest_regression()
+
+    print("\n" + "-"*60 + "\nNeural Network Regression (PyTorch)\n" + "-"*60)
+    nn_regression()

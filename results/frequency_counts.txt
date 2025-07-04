@@ -45,3 +45,6 @@ SOBRESALIENTE           913
 SATISFACTORIO           408
 AÚN NO SATISFACTORIO    168
 Total: 1489
+
+
+Summary: Most common DICTAMEN: SOBRESALIENTE (913 records). 
