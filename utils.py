@@ -1,6 +1,8 @@
 import pandas as pd
 import os
 import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
 
 def read_excel_file(filepath: str):
     """
@@ -250,3 +252,120 @@ def generate_profiling_report(df, output_path="results/profiling_report.html"):
         print(f"Profiling report saved to {output_path}")
     except ImportError:
         print("ydata-profiling is not installed. Run 'pip install ydata-profiling' to use this feature.")
+
+def exploratory_scatter_plots(df, target_col="Calificación 3 er parcial", top_features_path="results/nn_regression/data.txt"):
+    """
+    Create scatter plots for the top 5 most influential features vs. the target.
+    """
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    import os
+    os.makedirs("results/exploratory_plots", exist_ok=True)
+    # Read top 5 one-hot features from NN data.txt
+    features = []
+    with open(top_features_path) as f:
+        lines = f.readlines()
+    found = False
+    for line in lines:
+        if line.startswith('Top 20 Most Influential Features'):
+            found = True
+            continue
+        if found and ':' in line:
+            feat = line.split(':')[0].strip()
+            features.append(feat)
+        if len(features) == 5:
+            break
+    # Preprocess to get one-hot DataFrame
+    from regression import preprocess_features
+    df_proc = preprocess_features(df, target_col)
+    y = df[target_col].values
+    for feat in features:
+        if feat not in df_proc.columns:
+            print(f"[exploratory_scatter_plots] Warning: Feature '{feat}' not found in preprocessed DataFrame, skipping.")
+            continue
+        plt.figure(figsize=(7,5))
+        sns.boxplot(x=df_proc[feat], y=y)
+        plt.xlabel(f"{feat} (0=absent, 1=present)")
+        plt.ylabel(target_col)
+        plt.title(f"{target_col} vs. {feat} (one-hot)")
+        plt.tight_layout()
+        plt.savefig(f"results/exploratory_plots/{feat.replace('/', '_').replace(' ', '_')}_boxplot.png")
+        plt.close()
+
+def plot_grades_by_state(df, grade_col="Calificación 3 er parcial", state_col="EDO_SEDE"):
+    """
+    Plot all grades colored by state (EDO_SEDE).
+    """
+    import os
+    os.makedirs("results/exploratory_plots", exist_ok=True)
+    plt.figure(figsize=(12, 6))
+    sns.stripplot(x=state_col, y=grade_col, data=df, jitter=True, hue=state_col, dodge=False, palette="tab20", alpha=0.7, legend=False)
+    plt.xlabel("State (EDO_SEDE)")
+    plt.ylabel(grade_col)
+    plt.title(f"{grade_col} by State (EDO_SEDE)")
+    plt.xticks(rotation=45, ha='right')
+    plt.tight_layout()
+    plt.legend(title="State", bbox_to_anchor=(1.05, 1), loc='upper left')
+    plt.savefig("results/exploratory_plots/grades_by_state.png")
+    plt.close()
+
+def plot_grade_histogram_by_state(df, grade_col="Calificación 3 er parcial", state_col="EDO_SEDE"):
+    """
+    Plot histogram of grades, colored by state.
+    """
+    import os
+    import matplotlib.pyplot as plt
+    import seaborn as sns
+    os.makedirs("results/exploratory_plots", exist_ok=True)
+    plt.figure(figsize=(12, 6))
+    # Bin grades for better visualization
+    bins = np.linspace(df[grade_col].min(), df[grade_col].max(), 20)
+    df['grade_bin'] = pd.cut(df[grade_col], bins, include_lowest=True)
+    sns.countplot(x='grade_bin', hue=state_col, data=df, palette="tab20")
+    plt.xlabel(grade_col)
+    plt.ylabel("Number of Students")
+    plt.title(f"Distribution of {grade_col} by State (EDO_SEDE)")
+    plt.xticks(rotation=45, ha='right')
+    plt.legend(title="State", bbox_to_anchor=(1.05, 1), loc='upper left')
+    plt.tight_layout()
+    plt.savefig("results/exploratory_plots/grades_histogram_by_state.png")
+    plt.close()
+    df.drop(columns=['grade_bin'], inplace=True)
+
+def plot_top3_states_per_grade(df, grade_col="Calificación 3 er parcial", state_col="EDO_SEDE"):
+    """
+    For each rounded grade, plot the top 3 states with the highest percentage of students at that grade.
+    """
+    import os
+    import matplotlib.pyplot as plt
+    os.makedirs("results/exploratory_plots", exist_ok=True)
+    # Round grades up to nearest integer
+    df['grade_rounded'] = np.ceil(df[grade_col]).astype(int)
+    # Calculate percentage per state per grade
+    pct_df = df.groupby([state_col, 'grade_rounded']).size().reset_index(name='count')
+    total_per_grade = pct_df.groupby('grade_rounded')['count'].sum().reset_index(name='total')
+    pct_df = pct_df.merge(total_per_grade, on='grade_rounded')
+    pct_df['percent'] = pct_df['count'] / pct_df['total'] * 100
+    # For each grade, get top 3 states
+    top3 = pct_df.groupby('grade_rounded').apply(lambda x: x.nlargest(3, 'percent')).reset_index(drop=True)
+    # Plot
+    plt.figure(figsize=(10,6))
+    colors = {}
+    for state in top3[state_col].unique():
+        colors[state] = plt.cm.tab20(hash(state) % 20)
+    for _, row in top3.iterrows():
+        plt.scatter(row['grade_rounded'], row['percent'], color=colors[row[state_col]], label=row[state_col])
+    # Custom legend for only unique states
+    handles = []
+    labels = []
+    for state, color in colors.items():
+        handles.append(plt.Line2D([0], [0], marker='o', color='w', markerfacecolor=color, markersize=8))
+        labels.append(state)
+    plt.xlabel('Grade (rounded up)')
+    plt.ylabel('Percentage of Students (%)')
+    plt.title('Top 3 States per Grade (by % of students)')
+    plt.legend(handles, labels, bbox_to_anchor=(1.05, 1), loc='upper left', title='State')
+    plt.tight_layout()
+    plt.savefig("results/exploratory_plots/top3_states_per_grade.png")
+    plt.close()
+    df.drop(columns=['grade_rounded'], inplace=True)

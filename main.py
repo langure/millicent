@@ -8,7 +8,11 @@ from utils import (
     correlation_analysis,
     trends_and_outliers,
     missing_data_analysis,
-    visualizations
+    visualizations,
+    exploratory_scatter_plots,
+    plot_grades_by_state,
+    plot_grade_histogram_by_state,
+    plot_top3_states_per_grade
 )
 from regression import linear_regression, polynomial_regression, random_forest_regression, nn_regression
 
@@ -38,6 +42,9 @@ if __name__ == "__main__":
     print("\n" + "-"*60 + "\nVisualizations\n" + "-"*60)
     visualizations(df)
 
+    print("\n" + "-"*60 + "\nExploratory Scatter Plots\n" + "-"*60)
+    exploratory_scatter_plots(df)
+
     print("\n" + "-"*60 + "\nLinear Regression\n" + "-"*60)
     linear_regression()
 
@@ -49,3 +56,12 @@ if __name__ == "__main__":
 
     print("\n" + "-"*60 + "\nNeural Network Regression (PyTorch)\n" + "-"*60)
     nn_regression()
+
+    print("\n" + "-"*60 + "\nGrades by State (EDO_SEDE)\n" + "-"*60)
+    plot_grades_by_state(df)
+
+    print("\n" + "-"*60 + "\nGrade Histogram by State (EDO_SEDE)\n" + "-"*60)
+    plot_grade_histogram_by_state(df)
+
+    print("\n" + "-"*60 + "\nTop 3 States per Grade\n" + "-"*60)
+    plot_top3_states_per_grade(df)
