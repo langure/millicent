@@ -1,0 +1,6 @@
+Visualizations
+--------------
+This section lists the generated plots. See the PNG files in the results/ directory.
+- histogram_puntaje_obtenido.png: Distribution of scores.
+- bar_dictamen.png: Count of each DICTAMEN category.
+- boxplot_puntaje_by_sexo.png: Score distribution by gender.

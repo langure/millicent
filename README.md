@@ -3,5 +3,5 @@
 ```
 brew update
 brew upgrade python
-python -m pip install Django
+python -m venv venv
 ```
